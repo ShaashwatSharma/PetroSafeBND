@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String   // Hashed password
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  sensors       SensorData[]
+  alerts        Alert[]
+  calibrations  Calibration[]
+}
+
+model SensorData {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  level     Float    // Fuel level in % or liters
+  timestamp DateTime @default(now())
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  type      String   // e.g., "fuel_theft", "high_usage"
+  message   String
+  createdAt DateTime @default(now())
+  resolved  Boolean  @default(false)
+}
+
+model Calibration {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  offset      Float    // e.g., +2L or -1.5L
+  scaleFactor Float    // e.g., 1.02 to multiply incoming sensor values
+  updatedAt   DateTime @updatedAt
+}
