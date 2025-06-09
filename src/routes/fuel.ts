@@ -11,6 +11,10 @@ fuelrouter.post("/fuel", async (req: Request, res: Response) => {
   try {
     const { level, time, userId } = req.body;
 
+     if (!userId || level == null || !time) {
+      return res.status(400).json({ error: "Missing fields" });
+    }
+
     const entry = await prisma.sensorData.create({
       data: {
         level,
