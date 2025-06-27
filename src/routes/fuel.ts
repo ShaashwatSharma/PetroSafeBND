@@ -33,14 +33,11 @@ fuelrouter.post("/fuel", async (req: Request, res: Response) => {
 
 fuelrouter.get("/fuel", async (req: Request, res: Response) => {
   try {
-    const { userId } = req.query;
+   
 
-    const latest = await prisma.fuelReading.findFirst({
-      where: { userId: String(userId) },
-      orderBy: { time: "desc" }
-    });
-
-    return res.json({ currentLevel: latest?.level ?? 0 });
+    return res.status(400).json({
+      Message:"Data was sent successfully"
+     });
   } catch (e) {
     return res.status(500).json({ message: "Error fetching fuel data" });
   }
